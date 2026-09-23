@@ -4,16 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
-  <title>Galaxy Tab Radar</title>
+  <title>Device Radar</title>
   <link rel="stylesheet" href="app.css">
 </head>
 <body>
   <main class="shell">
     <header>
       <div>
-        <p class="eyebrow">GALAXY TAB MARKET WATCH</p>
-        <h1>Galaxy Tab <span>Radar</span></h1>
-        <p class="lead">S9~S11 · 5G 자급제 · Wi-Fi 미개봉 매물을 한 번에 찾습니다.</p>
+        <p class="eyebrow">DEVICE MARKET WATCH</p>
+        <h1>Device <span>Radar</span></h1>
+        <p class="lead">갤럭시탭 · 갤럭시폰 · 아이폰 · 아이패드 매물을 기종·세대별로 한 번에 찾습니다.</p>
       </div>
       <button id="refreshButton" class="primary"><span class="pulse"></span><span class="spinner"></span> 새로고침</button>
     </header>
@@ -40,6 +40,11 @@
             <button data-filter="match">조건충족</button>
             <button data-filter="review">확인필요</button>
           </div>
+          <select id="sortOrder" class="sort-select">
+            <option value="recent">최신순</option>
+            <option value="price_asc">가격 낮은순</option>
+            <option value="price_desc">가격 높은순</option>
+          </select>
         </div>
         <div id="empty" class="empty">데이터를 불러오는 중입니다.</div>
         <div id="listings" class="listing-grid"></div>
@@ -49,22 +54,13 @@
         <div class="section-title"><div><p class="eyebrow">CONTROL</p><h2>표시 설정</h2></div></div>
         <form id="settingsForm">
           <fieldset>
-            <legend>갤럭시탭 세대</legend>
-            <label class="check"><input type="checkbox" id="genS9"><span>S9</span></label>
-            <label class="check"><input type="checkbox" id="genS10"><span>S10</span></label>
-            <label class="check"><input type="checkbox" id="genS11"><span>S11</span></label>
+            <legend>기종</legend>
+            <div id="deviceFamilies"></div>
           </fieldset>
-          <fieldset>
-            <legend>모델 등급</legend>
-            <label class="check"><input type="checkbox" id="tierBase"><span>S 기본형</span></label>
-            <label class="check"><input type="checkbox" id="tierPlus"><span>S+</span></label>
-            <label class="check"><input type="checkbox" id="tierUltra"><span>Ultra</span></label>
-          </fieldset>
-          <fieldset>
-            <legend>통신 유형</legend>
-            <label class="check"><input type="checkbox" id="type5g"><span>5G 자급제/정상해지</span></label>
-            <label class="check"><input type="checkbox" id="typeWifi"><span>Wi-Fi</span></label>
-          </fieldset>
+          <div class="row">
+            <label>포함 키워드<input id="includeKeywords" type="text" placeholder="예: 블랙, 256"></label>
+            <label>제외 키워드<input id="excludeKeywords" type="text" placeholder="예: 파손, 스크래치"></label>
+          </div>
           <div class="row">
             <label>최소 가격<input id="minPrice" type="number" min="0" step="10000"></label>
             <label>최대 가격<input id="maxPrice" type="number" min="0" step="10000"></label>
