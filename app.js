@@ -4,6 +4,44 @@ let currentFilter = 'candidates';
 let state = { listings: [], last_run: null, defaults: null };
 let settings = null;
 
+// ---- presence-driven scan trigger ----
+// Scanning only happens while someone has this page open and visible.
+// This calls a small Cloudflare Worker proxy instead of GitHub's API
+// directly — the real token only ever lives in the Worker's encrypted
+// secret, never in this file or any git commit.
+const TRIGGER_PROXY_URL = 'https://winter-paper-72a2.browninvestmentor.workers.dev';
+const TRIGGER_COOLDOWN_MS = 4 * 60 * 1000;
+const PRESENCE_INTERVAL_MS = 5 * 60 * 1000;
+let lastTriggerRequestAt = 0;
+let presenceTimer = null;
+
+async function dispatchScan() {
+  lastTriggerRequestAt = Date.now();
+  try {
+    const response = await fetch(TRIGGER_PROXY_URL, { method: 'POST' });
+    return response.ok;
+  } catch (error) { return false; /* network hiccup: next tick or click retries */ }
+}
+async function maybeTriggerScan() {
+  const now = Date.now();
+  if (now - lastTriggerRequestAt < TRIGGER_COOLDOWN_MS) return;
+  const lastRunAt = state.last_run ? new Date(state.last_run.finished_at).getTime() : 0;
+  if (lastRunAt && now - lastRunAt < TRIGGER_COOLDOWN_MS) return;
+  await dispatchScan();
+}
+function startPresenceLoop() {
+  maybeTriggerScan();
+  if (!presenceTimer) presenceTimer = setInterval(maybeTriggerScan, PRESENCE_INTERVAL_MS);
+}
+function stopPresenceLoop() {
+  if (presenceTimer) { clearInterval(presenceTimer); presenceTimer = null; }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') startPresenceLoop();
+  else stopPresenceLoop();
+});
+// ---- end presence-driven scan trigger ----
+
 // ---- rules.py port: classification runs entirely in the browser ----
 const TAB = /갤럭시\s*탭|galaxy\s*tab/i;
 const GENERATION = /(?<![a-z0-9])s\s*(9|10|11)(?!\d)/i;
@@ -168,7 +206,40 @@ async function loadState() {
     render();
   } catch (error) { $('statusText').textContent = '데이터를 불러오지 못했습니다'; }
 }
-$('refreshButton').addEventListener('click', loadState);
+const REFRESH_POLL_MS = 5000;
+const REFRESH_TIMEOUT_MS = 3 * 60 * 1000;
+let refreshing = false;
+function setRefreshLoading(on) {
+  $('refreshButton').classList.toggle('loading', on);
+  $('refreshButton').disabled = on;
+  $('refreshButton').lastChild.textContent = on ? ' 스캔 중…' : ' 새로고침';
+}
+$('refreshButton').addEventListener('click', async () => {
+  if (refreshing) return;
+  refreshing = true;
+  setRefreshLoading(true);
+  const baselineFinishedAt = state.last_run ? state.last_run.finished_at : null;
+  const dispatched = await dispatchScan();
+  await loadState();
+  if (!dispatched) { setRefreshLoading(false); refreshing = false; return; }
+  const startedAt = Date.now();
+  const poll = async () => {
+    await loadState();
+    const finishedAt = state.last_run ? state.last_run.finished_at : null;
+    if (finishedAt && finishedAt !== baselineFinishedAt) {
+      setRefreshLoading(false); refreshing = false;
+      toast('최신 결과로 갱신했습니다.');
+      return;
+    }
+    if (Date.now() - startedAt > REFRESH_TIMEOUT_MS) {
+      setRefreshLoading(false); refreshing = false;
+      toast('스캔이 예상보다 오래 걸리고 있어요. 잠시 후 다시 눌러주세요.');
+      return;
+    }
+    setTimeout(poll, REFRESH_POLL_MS);
+  };
+  setTimeout(poll, REFRESH_POLL_MS);
+});
 $('filters').addEventListener('click', (event) => {
   const button = event.target.closest('button'); if (!button) return;
   document.querySelectorAll('.filters button').forEach((x) => x.classList.remove('active'));
@@ -198,3 +269,4 @@ $('settingsForm').addEventListener('change', (event) => {
 $('settingsForm').addEventListener('input', (event) => { if (event.target.type !== 'checkbox') applySettings(); });
 loadState();
 setInterval(loadState, 60000);
+if (document.visibilityState === 'visible') startPresenceLoop();

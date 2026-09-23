@@ -11,6 +11,11 @@ h1 span { color:var(--orange); }
 .lead { margin:20px 0 0; color:var(--muted); font-size:15px; }
 .primary { border:0; border-radius:999px; background:var(--ink); color:white; padding:16px 24px; font-weight:750; display:flex; gap:10px; align-items:center; white-space:nowrap; }
 .pulse { width:8px; height:8px; border-radius:50%; background:var(--acid); box-shadow:0 0 0 5px #dfff0026; }
+.spinner { display:none; width:15px; height:15px; border-radius:50%; border:2px solid #ffffff40; border-top-color:#fff; animation:spin .7s linear infinite; }
+.primary.loading { cursor:progress; opacity:.85; }
+.primary.loading .pulse { display:none; }
+.primary.loading .spinner { display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
 .statusbar { min-height:54px; display:flex; align-items:center; gap:28px; justify-content:space-between; border-bottom:1px solid var(--line); font-size:12px; color:var(--muted); flex-wrap:wrap; }
 .statusbar>div:first-child { color:var(--ink); }
 .dot { display:inline-block; width:7px; height:7px; margin-right:8px; border-radius:50%; background:#28b463; }
