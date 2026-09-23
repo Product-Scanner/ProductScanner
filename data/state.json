@@ -1,0 +1,14 @@
+{
+  "generated_at": "",
+  "last_run": null,
+  "defaults": {
+    "min_price": 0,
+    "max_price": 1200000,
+    "max_age_days": 7,
+    "generations": ["S9", "S10", "S11"],
+    "model_tiers": ["base", "plus", "ultra"],
+    "network_types": ["5g", "wifi"],
+    "platforms": { "daangn": true, "joongna": true, "bunjang": true }
+  },
+  "listings": []
+}

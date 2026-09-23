@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Galaxy Tab Radar</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">GALAXY TAB MARKET WATCH</p>
+        <h1>Galaxy Tab <span>Radar</span></h1>
+        <p class="lead">S9~S11 · 5G 자급제 · Wi-Fi 미개봉 매물을 한 번에 찾습니다.</p>
+      </div>
+      <button id="refreshButton" class="primary"><span class="pulse"></span>새로고침</button>
+    </header>
+
+    <section class="statusbar">
+      <div><span id="statusDot" class="dot"></span><strong id="statusText">준비 중</strong></div>
+      <div id="lastRun">아직 스캔 기록이 없습니다</div>
+      <div class="platforms"><span>당근</span><span>중고나라</span><span>번개장터</span></div>
+    </section>
+
+    <section class="metrics">
+      <article><span>조건 충족</span><strong id="matchCount">0</strong><small>알림 대상</small></article>
+      <article><span>확인 필요</span><strong id="reviewCount">0</strong><small>문구가 부족한 후보</small></article>
+      <article><span>제외</span><strong id="rejectedCount">0</strong><small>선택 범위 밖</small></article>
+      <article><span>현재 수집</span><strong id="totalCount">0</strong><small>중복 제거됨</small></article>
+    </section>
+
+    <section class="workspace">
+      <div class="results-panel">
+        <div class="section-title">
+          <div><p class="eyebrow">LIVE RESULTS</p><h2>발견한 매물</h2></div>
+          <div class="filters" id="filters">
+            <button class="active" data-filter="candidates">후보 전체</button>
+            <button data-filter="match">조건충족</button>
+            <button data-filter="review">확인필요</button>
+          </div>
+        </div>
+        <div id="empty" class="empty">데이터를 불러오는 중입니다.</div>
+        <div id="listings" class="listing-grid"></div>
+      </div>
+
+      <aside>
+        <div class="section-title"><div><p class="eyebrow">CONTROL</p><h2>표시 설정</h2></div></div>
+        <form id="settingsForm">
+          <fieldset>
+            <legend>갤럭시탭 세대</legend>
+            <label class="check"><input type="checkbox" id="genS9"><span>S9</span></label>
+            <label class="check"><input type="checkbox" id="genS10"><span>S10</span></label>
+            <label class="check"><input type="checkbox" id="genS11"><span>S11</span></label>
+          </fieldset>
+          <fieldset>
+            <legend>모델 등급</legend>
+            <label class="check"><input type="checkbox" id="tierBase"><span>S 기본형</span></label>
+            <label class="check"><input type="checkbox" id="tierPlus"><span>S+</span></label>
+            <label class="check"><input type="checkbox" id="tierUltra"><span>Ultra</span></label>
+          </fieldset>
+          <fieldset>
+            <legend>통신 유형</legend>
+            <label class="check"><input type="checkbox" id="type5g"><span>5G 자급제/정상해지</span></label>
+            <label class="check"><input type="checkbox" id="typeWifi"><span>Wi-Fi</span></label>
+          </fieldset>
+          <div class="row">
+            <label>최소 가격<input id="minPrice" type="number" min="0" step="10000"></label>
+            <label>최대 가격<input id="maxPrice" type="number" min="0" step="10000"></label>
+          </div>
+          <label>게시글 업로드 기간
+            <select id="maxAgeDays">
+              <option value="1">최근 24시간</option>
+              <option value="3">최근 3일</option>
+              <option value="7">최근 7일</option>
+              <option value="14">최근 14일</option>
+              <option value="30">최근 30일</option>
+              <option value="0">기간 제한 없음</option>
+            </select>
+          </label>
+          <fieldset>
+            <legend>플랫폼</legend>
+            <label class="check"><input type="checkbox" id="daangn"><span>당근</span></label>
+            <label class="check"><input type="checkbox" id="joongna"><span>중고나라</span></label>
+            <label class="check"><input type="checkbox" id="bunjang"><span>번개장터</span></label>
+          </fieldset>
+          <p id="autoSaveStatus" class="auto-save">변경 즉시 이 브라우저에 저장되어 반영됩니다</p>
+        </form>
+        <div class="rule-note">
+          <strong>알림 판정</strong>
+          <p>휴대폰 알림(카카오/디스코드/텔레그램)은 저장소의 <code>pages-config.json</code>과 GitHub Secrets 설정을 기준으로 GitHub Actions가 주기적으로 스캔하며 발송합니다. 여기서 바꾸는 표시 설정은 이 브라우저 화면에만 적용되고 알림 조건에는 영향을 주지 않습니다.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
