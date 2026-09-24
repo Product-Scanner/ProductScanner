@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
 const SETTINGS_KEY = 'galaxy-tab-radar-settings';
+const REGIONS = ['서울', '경기', '인천', '부산', '대구', '울산', '광주', '대전', '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
 let currentFilter = 'candidates';
 let state = { listings: [], last_run: null, defaults: null };
 let settings = null;
@@ -312,7 +313,7 @@ function readDeviceFamilies() {
 function loadSettings(defaults) {
   try {
     const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || 'null');
-    if (saved && saved.device_families) return saved;
+    if (saved && saved.device_families) return { regions: [...REGIONS], ...saved };
   } catch (error) { /* ignore malformed local storage */ }
   return {
     min_price: defaults.min_price, max_price: defaults.max_price, max_age_days: defaults.max_age_days,
@@ -320,6 +321,7 @@ function loadSettings(defaults) {
     include_keywords: [...(defaults.include_keywords || [])],
     exclude_keywords: [...(defaults.exclude_keywords || [])],
     sort: 'recent',
+    regions: [...REGIONS],
     platforms: { ...defaults.platforms },
   };
 }
@@ -334,6 +336,9 @@ function fillForm() {
   $('sortOrder').value = settings.sort || 'recent';
   fillDeviceFamilies();
   $('daangn').checked = settings.platforms.daangn; $('joongna').checked = settings.platforms.joongna; $('bunjang').checked = settings.platforms.bunjang;
+  const regions = settings.regions || REGIONS;
+  document.querySelectorAll('[data-region]').forEach((el) => { el.checked = regions.includes(el.dataset.region); });
+  $('regionAll').checked = regions.length === REGIONS.length;
 }
 function readForm() {
   const minPrice = +$('minPrice').value, maxPrice = +$('maxPrice').value;
@@ -343,6 +348,7 @@ function readForm() {
     include_keywords: $('includeKeywords').value.split(',').map((s) => s.trim()).filter(Boolean),
     exclude_keywords: $('excludeKeywords').value.split(',').map((s) => s.trim()).filter(Boolean),
     sort: $('sortOrder').value,
+    regions: [...document.querySelectorAll('[data-region]:checked')].map((el) => el.dataset.region),
     platforms: { daangn: $('daangn').checked, joongna: $('joongna').checked, bunjang: $('bunjang').checked },
   };
 }
@@ -353,8 +359,10 @@ const SORT_COMPARATORS = {
 };
 function render() {
   const enabledPlatforms = Object.entries(settings.platforms).filter(([, on]) => on).map(([name]) => name);
+  const regions = settings.regions || REGIONS;
   const classified = state.listings
     .filter((item) => enabledPlatforms.includes(item.platform))
+    .filter((item) => !item.region || regions.includes(item.region))
     .map((item) => ({ ...item, ...classify(item, settings) }));
   const stats = { total: classified.length, match: 0, review: 0, rejected: 0 };
   classified.forEach((item) => { stats[item.code] = (stats[item.code] || 0) + 1; });
@@ -429,10 +437,16 @@ function applySettings() {
   return true;
 }
 $('settingsForm').addEventListener('submit', (event) => event.preventDefault());
+$('regionAll').addEventListener('change', () => {
+  document.querySelectorAll('[data-region]').forEach((el) => { el.checked = $('regionAll').checked; });
+});
 $('settingsForm').addEventListener('change', (event) => {
   const platformIds = ['daangn', 'joongna', 'bunjang'];
   if (platformIds.includes(event.target.id) && !platformIds.some((id) => $(id).checked)) {
     event.target.checked = true; toast('플랫폼을 하나 이상 선택하세요.'); return;
+  }
+  if (event.target.dataset.region) {
+    $('regionAll').checked = [...document.querySelectorAll('[data-region]')].every((el) => el.checked);
   }
   applySettings();
 });

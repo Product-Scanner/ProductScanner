@@ -63,6 +63,9 @@ legend { font-size:11px; font-weight:750; color:#53585d; margin-bottom:9px; }
 .sub-group { margin:0 0 12px; }
 .sub-group:last-child { margin-bottom:0; }
 .sub-label { display:block; font-size:10px; font-weight:750; color:var(--muted); margin-bottom:7px; }
+.region-all { font-weight:800; margin-bottom:10px; }
+.region-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px 4px; }
+.region-grid .check { margin-right:0; }
 .auto-save { margin:8px 0 0; padding:10px 12px; border-radius:8px; background:#e8e9e5; color:#596066; font-size:11px; text-align:center; }
 .rule-note { margin-top:24px; padding:17px; border-radius:9px; background:#e8e9e5; font-size:11px; line-height:1.65; color:#5c6266; }
 .rule-note strong { color:var(--ink); }
