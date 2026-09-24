@@ -58,12 +58,12 @@ legend { font-size:11px; font-weight:750; color:#53585d; margin-bottom:9px; }
 .check input { width:auto; margin:0; accent-color:var(--ink); }
 .device-family { border:1px solid var(--line); border-radius:12px; background:#fafaf8; margin:0 0 10px; overflow:hidden; }
 .device-family:last-child { margin-bottom:0; }
-.device-family summary { cursor:pointer; font-size:13px; font-weight:800; padding:12px 14px; list-style:none; }
+.device-family summary { cursor:pointer; font-size:15px; font-weight:800; padding:12px 14px; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .device-family summary::-webkit-details-marker { display:none; }
-.device-family summary::before { content:'▸'; display:inline-block; margin-right:7px; color:var(--muted); transition:transform .15s; }
-.device-family[open] summary::before { transform:rotate(90deg); }
+.family-name::before { content:'▸'; display:inline-block; margin-right:7px; color:var(--muted); transition:transform .15s; }
+.device-family[open] .family-name::before { transform:rotate(90deg); }
 .device-family-body { padding:0 14px 14px; border-top:1px solid var(--line); }
-.family-toggle { display:flex; margin:14px 0 14px; font-weight:800; }
+.family-toggle { margin:0; }
 .sub-group { margin:0 0 14px; padding-top:12px; border-top:1px solid var(--line); }
 .sub-group:first-of-type { border-top:0; padding-top:0; }
 .sub-group:last-child { margin-bottom:0; }

@@ -268,9 +268,11 @@ function renderDeviceFamiliesMarkup() {
       <label class="check"><input type="checkbox" data-family="${family.id}" data-kind="network" data-value="5g"><span>5G 자급제/정상해지</span></label>
       <label class="check"><input type="checkbox" data-family="${family.id}" data-kind="network" data-value="wifi"><span>Wi-Fi</span></label></div></div>` : '';
     return `<details class="device-family" open>
-      <summary>${family.label}</summary>
+      <summary>
+        <span class="family-name">${family.label}</span>
+        <label class="check family-toggle" onclick="event.stopPropagation()"><input type="checkbox" data-family="${family.id}" data-kind="enabled" aria-label="${family.label} 표시"></label>
+      </summary>
       <div class="device-family-body">
-        <label class="check family-toggle"><input type="checkbox" data-family="${family.id}" data-kind="enabled"><span>이 기종 표시</span></label>
         <div class="sub-group"><span class="sub-label">세대</span><div class="checkbox-grid">${generationInputs}</div></div>
         ${tierInputs}
         ${networkInputs}
