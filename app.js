@@ -261,18 +261,20 @@ function renderDeviceFamiliesMarkup() {
       `<label class="check"><input type="checkbox" data-family="${family.id}" data-kind="generation" data-value="${g.id}"><span>${g.label}</span></label>`
     ).join('');
     const tierChoices = family.baseTier ? [...family.tiers, family.baseTier] : [];
-    const tierInputs = tierChoices.length ? `<div class="sub-group"><span class="sub-label">모델 등급</span>${tierChoices.map((t) =>
+    const tierInputs = tierChoices.length ? `<div class="sub-group"><span class="sub-label">모델 등급</span><div class="checkbox-grid">${tierChoices.map((t) =>
       `<label class="check"><input type="checkbox" data-family="${family.id}" data-kind="tier" data-value="${t.id}"><span>${t.label}</span></label>`
-    ).join('')}</div>` : '';
-    const networkInputs = family.hasNetwork ? `<div class="sub-group"><span class="sub-label">통신 유형</span>
+    ).join('')}</div></div>` : '';
+    const networkInputs = family.hasNetwork ? `<div class="sub-group"><span class="sub-label">통신 유형</span><div class="checkbox-grid">
       <label class="check"><input type="checkbox" data-family="${family.id}" data-kind="network" data-value="5g"><span>5G 자급제/정상해지</span></label>
-      <label class="check"><input type="checkbox" data-family="${family.id}" data-kind="network" data-value="wifi"><span>Wi-Fi</span></label></div>` : '';
+      <label class="check"><input type="checkbox" data-family="${family.id}" data-kind="network" data-value="wifi"><span>Wi-Fi</span></label></div></div>` : '';
     return `<details class="device-family" open>
       <summary>${family.label}</summary>
-      <label class="check family-toggle"><input type="checkbox" data-family="${family.id}" data-kind="enabled"><span>이 기종 표시</span></label>
-      <div class="sub-group"><span class="sub-label">세대</span>${generationInputs}</div>
-      ${tierInputs}
-      ${networkInputs}
+      <div class="device-family-body">
+        <label class="check family-toggle"><input type="checkbox" data-family="${family.id}" data-kind="enabled"><span>이 기종 표시</span></label>
+        <div class="sub-group"><span class="sub-label">세대</span><div class="checkbox-grid">${generationInputs}</div></div>
+        ${tierInputs}
+        ${networkInputs}
+      </div>
     </details>`;
   }).join('');
 }
